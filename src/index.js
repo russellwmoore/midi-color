@@ -1,23 +1,30 @@
 import { Midi } from "@tonejs/midi";
 import { Transport } from "tone";
-import { Sampler } from "tone";
+import { Player } from "tone";
+import { Buffer } from "tone";
 
-const sampler = new Sampler(
-  {
-    A1: "./audio/keys.mp3",
-  },
-  {
-    onload: () => {
-      document.querySelector("#start").removeAttribute("disabled");
-    },
-  }
-).toMaster();
+const startButton = document.createElement("button");
+startButton.setAttribute("id", "start");
+startButton.innerText = "start";
+startButton.setAttribute("disabled", true);
+document.body.appendChild(startButton);
 
-document.querySelector("#start").addEventListener("click", () => {
-  sampler.triggerAttack("A1");
+const player = new Player("./audio/keys.mp3", {
+  autoplay: false,
+}).toMaster();
+
+player.sync().start();
+
+startButton.addEventListener("click", () => {
+  start();
 });
 
-async function logMidi() {
+Buffer.on("load", () => {
+  console.log("loaded");
+  startButton.removeAttribute("disabled");
+});
+
+async function draw() {
   const midi = await Midi.fromUrl("./midi/keys.mid");
 
   const notes = midi.tracks[0].notes;
@@ -42,11 +49,10 @@ async function logMidi() {
   });
 }
 
-function start(e) {
-  e.preventDefault();
+function start() {
   Transport.start();
-  logMidi();
+  draw();
 }
 
-const startButton = document.querySelector("#start");
-startButton.addEventListener("click", start);
+// const startButton = document.querySelector("#start");
+// startButton.addEventListener("click", start);
