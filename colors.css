@@ -3,3 +3,8 @@
   height: 100px;
   background: yellow;
 }
+
+body {
+  margin: 0 auto;
+  background: black;
+}
