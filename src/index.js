@@ -1,11 +1,28 @@
 import { Midi } from "@tonejs/midi";
 import { Transport } from "tone";
+import { Sampler } from "tone";
+
+const sampler = new Sampler(
+  {
+    A1: "./audio/keys.mp3",
+  },
+  {
+    onload: () => {
+      document.querySelector("#start").removeAttribute("disabled");
+    },
+  }
+).toMaster();
+
+document.querySelector("#start").addEventListener("click", () => {
+  sampler.triggerAttack("A1");
+});
 
 async function logMidi() {
   const midi = await Midi.fromUrl("./midi/keys.mid");
 
   const notes = midi.tracks[0].notes;
 
+  //
   notes.map((note) => {
     console.log(note);
     Transport.schedule(function (time) {
