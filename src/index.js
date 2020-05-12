@@ -6,13 +6,15 @@ import { Draw } from "tone";
 
 // create start button
 const startButton = document.createElement("div");
-startButton.style.width = "100px";
-startButton.style.height = "30px";
-startButton.style.paddingTop = "10px";
+startButton.style.display = "flex";
+startButton.style.justifyContent = "center";
+startButton.style.alignItems = "center";
+startButton.style.width = "200px";
+startButton.style.height = "100px";
 startButton.style.background = "yellow";
-startButton.style.textAlign = "center";
 startButton.style.fontFamily = "monospace";
 startButton.setAttribute("id", "start");
+startButton.style.fontSize = "2em";
 startButton.innerText = "start";
 // startButton.setAttribute("disabled", true);
 startButton.addEventListener("click", start);
