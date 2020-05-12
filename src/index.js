@@ -5,10 +5,16 @@ import { Buffer } from "tone";
 import { Draw } from "tone";
 
 // create start button
-const startButton = document.createElement("button");
+const startButton = document.createElement("div");
+startButton.style.width = "100px";
+startButton.style.height = "30px";
+startButton.style.paddingTop = "10px";
+startButton.style.background = "yellow";
+startButton.style.textAlign = "center";
+startButton.style.fontFamily = "monospace";
 startButton.setAttribute("id", "start");
 startButton.innerText = "start";
-startButton.setAttribute("disabled", true);
+// startButton.setAttribute("disabled", true);
 startButton.addEventListener("click", start);
 document.body.appendChild(startButton);
 
