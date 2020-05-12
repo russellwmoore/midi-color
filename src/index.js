@@ -67,10 +67,9 @@ async function draw() {
         const element = document.createElement("div");
         //element.setAttribute("id", "yellow-rectangle");
         element.style.position = "absolute";
-        element.style.left = scale(note.midi, 55, 72, 40, 60) + "vw";
-        element.style.top = 0;
-        element.style.width = "20px";
-        element.style.height = "100%";
+        element.style.bottom = scale(note.midi, 55, 72, 40, 60) + "vh";
+        element.style.width = "100%";
+        element.style.height = "20px";
 
         const hue = scale(note.midi, 55, 72, 240, 300);
         const saturation = 100;
@@ -95,9 +94,10 @@ async function draw() {
         const element = document.createElement("div");
         //element.setAttribute("id", "yellow-rectangle");
         element.style.position = "absolute";
-        element.style.bottom = scale(note.midi, 55, 72, 40, 60) + "vh";
-        element.style.width = "100%";
-        element.style.height = "10px";
+        element.style.left = scale(note.midi, 55, 72, 40, 60) + "vw";
+        element.style.top = 0;
+        element.style.width = "10px";
+        element.style.height = "100%";
 
         const hue = scale(note.midi, 55, 72, 0, 70);
         const saturation = 100;
