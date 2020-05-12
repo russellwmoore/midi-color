@@ -20,6 +20,19 @@ startButton.addEventListener("click", start);
 startButton.setAttribute("id", "start");
 document.body.appendChild(startButton);
 
+const gridStyle = `
+  display: grid;
+  height: 100vh;
+  width: 100vw;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+`;
+
+// create grid container
+const grid = document.createElement("div");
+grid.style = gridStyle;
+document.body.appendChild(grid);
+
 // create Tone.Player
 const player = new Player("./audio/bachAudio.mp3", {
   autoplay: false,
@@ -65,21 +78,18 @@ async function draw() {
     Transport.schedule(function (time) {
       Draw.schedule(function () {
         const element = document.createElement("div");
-        //element.setAttribute("id", "yellow-rectangle");
-        element.style.position = "absolute";
-        element.style.bottom = scale(note.midi, 55, 72, 40, 60) + "vh";
-        element.style.width = "100%";
-        element.style.height = "40px";
+        const column = 8 - Math.floor(scale(note.midi, 55, 72, 1, 7));
+        element.style.gridArea = `${column} / 1/ ${column} / 8`;
 
         const hue = scale(note.midi, 55, 72, 240, 300);
         const saturation = 100;
         const lightness = scale(note.midi, 55, 72, 40, 50);
         element.style.background = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-        document.body.appendChild(element);
+        grid.appendChild(element);
 
         // schedule remove element after note duration
         Draw.schedule(function () {
-          document.body.removeChild(element);
+          grid.removeChild(element);
         }, time + duration + 0.02);
       }, time);
     }, time);
@@ -92,23 +102,18 @@ async function draw() {
     Transport.schedule(function (time) {
       Draw.schedule(function () {
         const element = document.createElement("div");
-        //element.setAttribute("id", "yellow-rectangle");
-        element.style.position = "absolute";
-        element.style.left = scale(note.midi, 55, 72, 40, 60) + "vw";
-        element.style.top = 0;
-        element.style.width = "20px";
-        element.style.height = "100%";
+        const row = Math.floor(scale(note.midi, 55, 72, 1, 7));
+        element.style.gridArea = `1 / ${row}/ 8 / ${row}`;
 
         const hue = scale(note.midi, 55, 72, 0, 70);
         const saturation = 100;
         const lightness = scale(note.midi, 55, 72, 40, 50);
         element.style.background = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-        element.style.marginTop = "30px";
-        document.body.appendChild(element);
+        grid.appendChild(element);
 
         // schedule remove element after note duration
         Draw.schedule(function () {
-          document.body.removeChild(element);
+          grid.removeChild(element);
         }, time + duration + 0.05);
       }, time);
     }, time);
