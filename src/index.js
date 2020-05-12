@@ -95,7 +95,7 @@ async function draw() {
         const element = document.createElement("div");
         //element.setAttribute("id", "yellow-rectangle");
         element.style.position = "absolute";
-        element.style.bottom = scale(note.midi, 55, 72, 40, 90) + "vh";
+        element.style.bottom = scale(note.midi, 55, 72, 40, 60) + "vh";
         element.style.width = "100%";
         element.style.height = "10px";
 
