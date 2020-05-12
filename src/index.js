@@ -13,24 +13,12 @@ startButton.style.width = "200px";
 startButton.style.height = "100px";
 startButton.style.background = "yellow";
 startButton.style.fontFamily = "monospace";
-startButton.setAttribute("id", "start");
 startButton.style.fontSize = "2em";
 startButton.innerText = "start";
-// startButton.setAttribute("disabled", true);
+
 startButton.addEventListener("click", start);
+startButton.setAttribute("id", "start");
 document.body.appendChild(startButton);
-
-// create stop button
-const stopButton = document.createElement("button");
-stopButton.setAttribute("id", "stop");
-stopButton.innerText = "stop";
-stopButton.addEventListener("click", stop);
-//document.body.appendChild(stopButton);
-
-const keysOneContainer = document.createElement("div");
-keysOneContainer.style.width = "100%";
-keysOneContainer.style.height = "100px";
-document.body.appendChild(keysOneContainer);
 
 // create Tone.Player
 const player = new Player("./audio/bachAudio.mp3", {
@@ -38,14 +26,12 @@ const player = new Player("./audio/bachAudio.mp3", {
 }).toMaster();
 player.sync().start();
 
-// enable start button when audio file loaded
+// on audio load, schedule drawing
 Buffer.on("load", () => {
-  console.log("loaded");
-  startButton.removeAttribute("disabled");
   draw();
 });
 
-// append/remove elements from dom based on midi note times
+// schedule drawing based on midi note times
 async function draw() {
   // get midi data
   const keysOne = await Midi.fromUrl("./midi/bachKeys1.mid");
@@ -103,20 +89,10 @@ async function draw() {
       }, time);
     }, time);
   });
-
-  //Transport.start();
 }
 
-// start transport and trigger append elements
+// start transport
 function start() {
   document.body.removeChild(startButton);
   Transport.start();
-}
-
-// stop transport and cancel scheduled Draw events.
-// TODO: Figure out why Draw does not start from zero after stop
-function stop() {
-  startButton.removeAttribute("disabled");
-  Draw.cancel();
-  Transport.stop();
 }
