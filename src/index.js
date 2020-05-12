@@ -1,8 +1,8 @@
 import { Midi } from "@tonejs/midi";
-import { Transport } from "tone";
 import { Player } from "tone";
 import { Buffer } from "tone";
 import { Draw } from "tone";
+import { Transport } from "tone";
 
 // create start button
 const startButton = document.createElement("div");
@@ -40,7 +40,9 @@ player.sync().start();
 
 // enable start button when audio file loaded
 Buffer.on("load", () => {
+  console.log("loaded");
   startButton.removeAttribute("disabled");
+  draw();
 });
 
 // append/remove elements from dom based on midi note times
@@ -55,52 +57,60 @@ async function draw() {
 
   //loop through keysOneNotes
   keysOneNotes.forEach((note) => {
+    let time = note.time;
+    let duration = note.duration;
     // schedule append element based on note.time
-    Draw.schedule(function () {
-      const element = document.createElement("div");
-      element.setAttribute("id", "yellow-rectangle");
-      element.style.position = "absolute";
-      element.style.left = note.midi + "vw";
-      element.style.top = 0;
-      element.style.width = "20px";
-      element.style.height = "100%";
-      element.style.background = "red";
-      document.body.appendChild(element);
-
-      // schedule remove element after note duration
+    Transport.schedule(function (time) {
       Draw.schedule(function () {
-        document.body.removeChild(element);
-      }, note.time + note.duration);
-    }, note.time);
+        const element = document.createElement("div");
+        element.setAttribute("id", "yellow-rectangle");
+        element.style.position = "absolute";
+        element.style.left = note.midi + "vw";
+        element.style.top = 0;
+        element.style.width = "20px";
+        element.style.height = "100%";
+        element.style.background = "red";
+        document.body.appendChild(element);
+
+        // schedule remove element after note duration
+        Draw.schedule(function () {
+          document.body.removeChild(element);
+        }, time + duration);
+      }, time);
+    }, time);
   });
 
   keysTwoNotes.forEach((note) => {
-    console.log(note);
+    let time = note.time;
+    let duration = note.duration;
     // schedule append element based on note.time
-    Draw.schedule(function () {
-      const element = document.createElement("div");
-      element.setAttribute("id", "yellow-rectangle");
-      element.style.position = "absolute";
-      element.style.top = (100 - note.midi) * 15 - 300 + "px";
-      element.style.width = "100%";
-      element.style.height = "10px";
-      element.style.background = "blue";
-      element.style.marginTop = "30px";
-      document.body.appendChild(element);
-
-      // schedule remove element after note duration
+    Transport.schedule(function (time) {
       Draw.schedule(function () {
-        document.body.removeChild(element);
-      }, note.time + note.duration + 0.06);
-    }, note.time);
+        const element = document.createElement("div");
+        element.setAttribute("id", "yellow-rectangle");
+        element.style.position = "absolute";
+        element.style.top = (100 - note.midi) * 15 - 300 + "px";
+        element.style.width = "100%";
+        element.style.height = "10px";
+        element.style.background = "blue";
+        element.style.marginTop = "30px";
+        document.body.appendChild(element);
+
+        // schedule remove element after note duration
+        Draw.schedule(function () {
+          document.body.removeChild(element);
+        }, time + duration);
+      }, time);
+    }, time);
   });
+
+  //Transport.start();
 }
 
 // start transport and trigger append elements
 function start() {
   document.body.removeChild(startButton);
   Transport.start();
-  draw();
 }
 
 // stop transport and cancel scheduled Draw events.
