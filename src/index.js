@@ -31,6 +31,21 @@ Buffer.on("load", () => {
   draw();
 });
 
+//-----------------------------------------------------------------------
+function shiftToBlue(val) {
+  const shifted = parseFloat(val) + 240;
+  if (shifted >= 360) {
+    return shifted - 360;
+  }
+  return shifted;
+}
+
+//-----------------------------------------------------------------------
+function scale(value, inMin, inMax, outMin, outMax) {
+  return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
+}
+
+//-----------------------------------------------------------------------
 // schedule drawing based on midi note times
 async function draw() {
   // get midi data
@@ -43,25 +58,30 @@ async function draw() {
 
   //loop through keysOneNotes
   keysOneNotes.forEach((note) => {
+    console.log(note.midi);
     let time = note.time;
     let duration = note.duration;
     // schedule append element based on note.time
     Transport.schedule(function (time) {
       Draw.schedule(function () {
         const element = document.createElement("div");
-        element.setAttribute("id", "yellow-rectangle");
+        //element.setAttribute("id", "yellow-rectangle");
         element.style.position = "absolute";
-        element.style.left = note.midi + "vw";
+        element.style.left = scale(note.midi, 55, 72, 40, 60) + "vw";
         element.style.top = 0;
         element.style.width = "20px";
         element.style.height = "100%";
-        element.style.background = "red";
+
+        const hue = scale(note.midi, 55, 72, 240, 300);
+        const saturation = 100;
+        const lightness = scale(note.midi, 55, 72, 40, 50);
+        element.style.background = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
         document.body.appendChild(element);
 
         // schedule remove element after note duration
         Draw.schedule(function () {
           document.body.removeChild(element);
-        }, time + duration);
+        }, time + duration + 0.02);
       }, time);
     }, time);
   });
@@ -73,24 +93,29 @@ async function draw() {
     Transport.schedule(function (time) {
       Draw.schedule(function () {
         const element = document.createElement("div");
-        element.setAttribute("id", "yellow-rectangle");
+        //element.setAttribute("id", "yellow-rectangle");
         element.style.position = "absolute";
-        element.style.top = (100 - note.midi) * 15 - 300 + "px";
+        element.style.bottom = scale(note.midi, 55, 72, 40, 90) + "vh";
         element.style.width = "100%";
         element.style.height = "10px";
-        element.style.background = "blue";
+
+        const hue = scale(note.midi, 55, 72, 0, 70);
+        const saturation = 100;
+        const lightness = scale(note.midi, 55, 72, 40, 50);
+        element.style.background = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
         element.style.marginTop = "30px";
         document.body.appendChild(element);
 
         // schedule remove element after note duration
         Draw.schedule(function () {
           document.body.removeChild(element);
-        }, time + duration);
+        }, time + duration + 0.05);
       }, time);
     }, time);
   });
 }
 
+//-----------------------------------------------------------------------
 // start transport
 function start() {
   document.body.removeChild(startButton);
