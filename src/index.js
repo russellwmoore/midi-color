@@ -10,14 +10,23 @@ const height = mobile() ? window.innerHeight + "px" : "100vh";
 // styles
 const startButtonStyle = `
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 200px;
-  height: 100px;
+  width: 300px;
+  height: 150px;
   background: yellow;
+  cursor: pointer;
+`;
+
+const startTextStyle = `
   font-family: monospace;
   font-size: 2em;
-  cursor: pointer;
+`;
+
+const soundMessageStyle = `
+  font-family: monospace;
+  font-size: 2em;
 `;
 const appContainerStyle = `
   display: grid;
@@ -53,9 +62,19 @@ const containerGridStyle = `
 // create start button
 const startButton = document.createElement("div");
 startButton.style = startButtonStyle;
-startButton.innerText = "start";
 startButton.addEventListener("click", start);
 startButton.setAttribute("id", "start");
+
+const startText = document.createElement("span");
+startText.style = startTextStyle;
+startText.innerText = "start";
+
+const soundMessage = document.createElement("span");
+soundMessage.style = soundMessageStyle;
+soundMessage.innerText = "(turn on sound)";
+
+startButton.appendChild(startText);
+startButton.appendChild(soundMessage);
 
 // create grids
 const appContainer = document.createElement("div");
