@@ -20,18 +20,32 @@ startButton.addEventListener("click", start);
 startButton.setAttribute("id", "start");
 document.body.appendChild(startButton);
 
-const gridStyle = `
+const innerGridStyle = `
+  display: grid;
+  height: 100%;
+  width: 100%;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  box-sizing: border-box;
+  border: 10px solid white;
+`;
+
+const containerGridStyle = `
   display: grid;
   height: 100vh;
   width: 100vw;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
 `;
 
 // create grid container
-const grid = document.createElement("div");
-grid.style = gridStyle;
-document.body.appendChild(grid);
+const containerGrid = document.createElement("div");
+const gridOne = document.createElement("div");
+const gridTwo = document.createElement("div");
+
+containerGrid.style = containerGridStyle;
+gridOne.style = innerGridStyle;
+gridTwo.style = innerGridStyle;
 
 // create Tone.Player
 const player = new Player("./audio/bachAudio.mp3", {
@@ -80,16 +94,19 @@ async function draw() {
         const element = document.createElement("div");
         const column = 8 - Math.floor(scale(note.midi, 55, 72, 1, 7));
         element.style.gridArea = `${column} / 1/ ${column} / 8`;
+        element.style.zIndex = 5;
 
         const hue = scale(note.midi, 55, 72, 240, 300);
         const saturation = 100;
         const lightness = scale(note.midi, 55, 72, 40, 50);
         element.style.background = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-        grid.appendChild(element);
+        //grid.appendChild(element);
+        gridOne.appendChild(element);
 
         // schedule remove element after note duration
         Draw.schedule(function () {
-          grid.removeChild(element);
+          //grid.removeChild(element);
+          gridOne.removeChild(element);
         }, time + duration + 0.02);
       }, time);
     }, time);
@@ -109,11 +126,13 @@ async function draw() {
         const saturation = 100;
         const lightness = scale(note.midi, 55, 72, 40, 50);
         element.style.background = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-        grid.appendChild(element);
+        //grid.appendChild(element);
+        gridTwo.appendChild(element);
 
         // schedule remove element after note duration
         Draw.schedule(function () {
-          grid.removeChild(element);
+          //grid.removeChild(element);
+          gridTwo.removeChild(element);
         }, time + duration + 0.05);
       }, time);
     }, time);
@@ -124,5 +143,8 @@ async function draw() {
 // start transport
 function start() {
   document.body.removeChild(startButton);
+  document.body.appendChild(containerGrid);
+  containerGrid.appendChild(gridTwo);
+  containerGrid.appendChild(gridOne);
   Transport.start();
 }
