@@ -40,15 +40,14 @@ const innerGridStyle = `
 
 const containerGridStyle = `
   display: grid;
-  height: 80%;
-  width: 80%;
+  height: 100%;
+  width: 100%;
   align-items: center;
 
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 1fr;
   box-sizing: border-box;
-  border: 10px solid red;
-  padding: 10%;
+  
 `;
 
 // create start button
