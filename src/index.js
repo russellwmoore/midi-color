@@ -22,18 +22,20 @@ document.body.appendChild(startButton);
 
 const innerGridStyle = `
   display: grid;
-  height: 100%;
+  height: 70%;
   width: 100%;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   box-sizing: border-box;
-  border: 10px solid white;
+  border: 1px solid white;
 `;
 
 const containerGridStyle = `
   display: grid;
   height: 100vh;
   width: 100vw;
+  align-items: center;
+
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 1fr;
 `;
@@ -85,27 +87,24 @@ async function draw() {
 
   //loop through keysOneNotes
   keysOneNotes.forEach((note) => {
-    console.log(note.midi);
     let time = note.time;
     let duration = note.duration;
     // schedule append element based on note.time
     Transport.schedule(function (time) {
       Draw.schedule(function () {
         const element = document.createElement("div");
-        const column = 8 - Math.floor(scale(note.midi, 55, 72, 1, 7));
-        element.style.gridArea = `${column} / 1/ ${column} / 8`;
+        const column = 19 - Math.floor(scale(note.midi, 55, 72, 1, 18));
+        element.style.gridArea = `${column} / 1/ ${column} / 19`;
         element.style.zIndex = 5;
 
         const hue = scale(note.midi, 55, 72, 240, 300);
         const saturation = 100;
         const lightness = scale(note.midi, 55, 72, 40, 50);
         element.style.background = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-        //grid.appendChild(element);
         gridOne.appendChild(element);
 
         // schedule remove element after note duration
         Draw.schedule(function () {
-          //grid.removeChild(element);
           gridOne.removeChild(element);
         }, time + duration + 0.02);
       }, time);
@@ -119,8 +118,9 @@ async function draw() {
     Transport.schedule(function (time) {
       Draw.schedule(function () {
         const element = document.createElement("div");
-        const row = Math.floor(scale(note.midi, 55, 72, 1, 7));
-        element.style.gridArea = `1 / ${row}/ 8 / ${row}`;
+        const row = Math.floor(scale(note.midi, 55, 72, 1, 18));
+        console.log("row: " + Math.floor(scale(note.midi, 55, 72, 1, 18)));
+        element.style.gridArea = `1 / ${row}/ 19 / ${row}`;
 
         const hue = scale(note.midi, 55, 72, 0, 70);
         const saturation = 100;
