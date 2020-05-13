@@ -9,8 +9,6 @@ const height = mobile() ? window.innerHeight + "px" : "100vh";
 
 // styles
 const startButtonStyle = `
-  position: absolute;
-  top: 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,10 +17,9 @@ const startButtonStyle = `
   background: yellow;
   font-family: monospace;
   font-size: 2em;
-  
+  cursor: pointer;
 `;
 const appContainerStyle = `
-  position: relative;
   display: grid;
   height: ${height};
   width: 100%;
@@ -53,21 +50,18 @@ const containerGridStyle = `
   border: 10px solid red;
   padding: 10%;
 `;
+
 // create start button
-// startButton.style.position = "absolute";
-// startButton.style.top = 0;
-// startButton.style.display = "flex";
-// startButton.style.justifyContent = "center";
-// startButton.style.alignItems = "center";
-// startButton.style.width = "200px";
-// startButton.style.height = "100px";
-// startButton.style.background = "yellow";
-// startButton.style.fontFamily = "monospace";
-// startButton.style.fontSize = "2em";
+const startButton = document.createElement("div");
+startButton.style = startButtonStyle;
+startButton.innerText = "start";
+startButton.addEventListener("click", start);
+startButton.setAttribute("id", "start");
 
 // create grids
 const appContainer = document.createElement("div");
 appContainer.setAttribute("id", "appContainer");
+
 const containerGrid = document.createElement("div");
 appContainer.setAttribute("id", "containerGrid");
 
@@ -77,21 +71,15 @@ appContainer.setAttribute("id", "gridOne");
 const gridTwo = document.createElement("div");
 appContainer.setAttribute("id", "gridTwo");
 
+// apply styles
 appContainer.style = appContainerStyle;
 containerGrid.style = containerGridStyle;
 gridOne.style = innerGridStyle;
 gridTwo.style = innerGridStyle;
 
+// append elements
 document.body.appendChild(appContainer);
-
-// create start button
-const startButton = document.createElement("div");
-startButton.style = startButtonStyle;
-startButton.innerText = "start";
-
-startButton.addEventListener("click", start);
-startButton.setAttribute("id", "start");
-document.body.appendChild(startButton);
+appContainer.appendChild(startButton);
 
 // create Tone.Player
 const player = new Player("./audio/bachAudio.mp3", {
@@ -188,10 +176,9 @@ async function draw() {
 //-----------------------------------------------------------------------
 // start transport
 function start() {
-  document.body.removeChild(startButton);
+  appContainer.removeChild(startButton);
   appContainer.appendChild(containerGrid);
   containerGrid.appendChild(gridTwo);
   containerGrid.appendChild(gridOne);
-
   Transport.start();
 }
