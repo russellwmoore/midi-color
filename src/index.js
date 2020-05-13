@@ -5,59 +5,93 @@ import { Draw } from "tone";
 import { Transport } from "tone";
 import mobile from "is-mobile";
 
-console.log(mobile());
-
-// create start button
-const startButton = document.createElement("div");
-startButton.style.position = "absolute";
-startButton.style.top = 0;
-startButton.style.display = "flex";
-startButton.style.justifyContent = "center";
-startButton.style.alignItems = "center";
-startButton.style.width = "200px";
-startButton.style.height = "100px";
-startButton.style.background = "yellow";
-startButton.style.fontFamily = "monospace";
-startButton.style.fontSize = "2em";
-startButton.innerText = "start";
-
-startButton.addEventListener("click", start);
-startButton.setAttribute("id", "start");
-document.body.appendChild(startButton);
-
 const height = mobile() ? window.innerHeight + "px" : "100vh";
 
-const innerGridStyle = `
+// styles
+const startButtonStyle = `
+  position: absolute;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 100px;
+  background: yellow;
+  font-family: monospace;
+  font-size: 2em;
+  
+`;
+const appContainerStyle = `
+  position: relative;
+  display: grid;
+  height: ${height};
+  width: 100%;
+  align-items: center;
+  justify-items: center;
+  box-sizing: border-box;
+`;
+
+const innerGridStyle = ` 
+  position: relative;
   display: grid;
   height: 100%;
   width: 100%;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   box-sizing: border-box;
-`;
+`; // make size dynamic
 
 const containerGridStyle = `
   display: grid;
-  height: ${height};
-  width: 100vw;
+  height: 80%;
+  width: 80%;
   align-items: center;
 
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 1fr;
+  box-sizing: border-box;
+  border: 10px solid red;
+  padding: 10%;
 `;
+// create start button
+// startButton.style.position = "absolute";
+// startButton.style.top = 0;
+// startButton.style.display = "flex";
+// startButton.style.justifyContent = "center";
+// startButton.style.alignItems = "center";
+// startButton.style.width = "200px";
+// startButton.style.height = "100px";
+// startButton.style.background = "yellow";
+// startButton.style.fontFamily = "monospace";
+// startButton.style.fontSize = "2em";
 
-// create grid container
+// create grids
+const appContainer = document.createElement("div");
+appContainer.setAttribute("id", "appContainer");
 const containerGrid = document.createElement("div");
-const gridOne = document.createElement("div");
-const gridTwo = document.createElement("div");
+appContainer.setAttribute("id", "containerGrid");
 
+const gridOne = document.createElement("div");
+appContainer.setAttribute("id", "gridOne");
+
+const gridTwo = document.createElement("div");
+appContainer.setAttribute("id", "gridTwo");
+
+appContainer.style = appContainerStyle;
 containerGrid.style = containerGridStyle;
 gridOne.style = innerGridStyle;
 gridTwo.style = innerGridStyle;
 
-document.body.appendChild(containerGrid);
-containerGrid.appendChild(gridTwo);
-containerGrid.appendChild(gridOne);
+document.body.appendChild(appContainer);
+
+// create start button
+const startButton = document.createElement("div");
+startButton.style = startButtonStyle;
+startButton.innerText = "start";
+
+startButton.addEventListener("click", start);
+startButton.setAttribute("id", "start");
+document.body.appendChild(startButton);
 
 // create Tone.Player
 const player = new Player("./audio/bachAudio.mp3", {
@@ -155,6 +189,9 @@ async function draw() {
 // start transport
 function start() {
   document.body.removeChild(startButton);
+  appContainer.appendChild(containerGrid);
+  containerGrid.appendChild(gridTwo);
+  containerGrid.appendChild(gridOne);
 
   Transport.start();
 }
