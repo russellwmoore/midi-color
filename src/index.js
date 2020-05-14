@@ -45,7 +45,7 @@ const innerGridStyle = `
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   box-sizing: border-box;
-`; // make size dynamic
+`;
 
 const containerGridStyle = `
   display: grid;
@@ -100,8 +100,10 @@ document.body.appendChild(appContainer);
 appContainer.appendChild(startButton);
 
 // create Tone.Player
-const player = new Player("./audio/bachAudio.mp3", {
-  autoplay: false,
+const player = new Player({
+  url: "./audio/bachAudio.mp3",
+  fadeIn: 0,
+  fadeOut: 0.05,
 }).toMaster();
 player.sync().start();
 
@@ -143,9 +145,6 @@ async function draw() {
     Transport.schedule(function (time) {
       Draw.schedule(function () {
         const element = document.createElement("div");
-        // const column = 19 - Math.floor(scale(note.midi, 55, 72, 1, 18));
-        // element.style.gridArea = `${column} / 1/ ${column} / 19`;
-
         const row = Math.floor(scale(note.midi, 55, 72, 1, 18));
         element.style.gridArea = `1 / ${row}/ 19 / ${row}`;
         element.style.zIndex = 5;
@@ -159,7 +158,7 @@ async function draw() {
         // schedule remove element after note duration
         Draw.schedule(function () {
           gridOne.removeChild(element);
-        }, time + duration + 0.02);
+        }, time + duration + 0.05);
       }, time);
     }, time);
   });
@@ -178,12 +177,10 @@ async function draw() {
         const saturation = 100;
         const lightness = scale(note.midi, 55, 72, 40, 50);
         element.style.background = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-        //grid.appendChild(element);
         gridTwo.appendChild(element);
 
         // schedule remove element after note duration
         Draw.schedule(function () {
-          //grid.removeChild(element);
           gridTwo.removeChild(element);
         }, time + duration + 0.05);
       }, time);
@@ -198,5 +195,9 @@ function start() {
   appContainer.appendChild(containerGrid);
   containerGrid.appendChild(gridTwo);
   containerGrid.appendChild(gridOne);
+  // Transport.loop = true;
+  // Transport.bpm.value = 114;
+  // Transport.loopStart = 0;
+  // Transport.loopEnd = player.buffer.duration;
   Transport.start();
 }
