@@ -8,7 +8,7 @@ import mobile from "is-mobile";
 const height = mobile() ? window.innerHeight + "px" : "100vh";
 
 // styles
-const startButtonStyle = `
+const buttonStyle = `
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -19,12 +19,12 @@ const startButtonStyle = `
   cursor: pointer;
 `;
 
-const startTextStyle = `
+const messageStyle = `
   font-family: monospace;
   font-size: 2em;
 `;
 
-const soundMessageStyle = `
+const messageStyleSmall = `
   font-family: monospace;
   font-size: 2em;
 `;
@@ -61,20 +61,31 @@ const containerGridStyle = `
 
 // create start button
 const startButton = document.createElement("div");
-startButton.style = startButtonStyle;
+startButton.style = buttonStyle;
 startButton.addEventListener("click", start);
 startButton.setAttribute("id", "start");
 
+const replayButton = document.createElement("div");
+replayButton.style = buttonStyle;
+replayButton.addEventListener("click", replay);
+replayButton.setAttribute("id", "replay");
+
 const startText = document.createElement("span");
-startText.style = startTextStyle;
+startText.style = messageStyle;
 startText.innerText = "start";
 
+const replayText = document.createElement("span");
+replayText.style = messageStyle;
+replayText.innerText = "play again";
+
 const soundMessage = document.createElement("span");
-soundMessage.style = soundMessageStyle;
+soundMessage.style = messageStyleSmall;
 soundMessage.innerText = "(turn on sound)";
 
+// apply button styles
 startButton.appendChild(startText);
 startButton.appendChild(soundMessage);
+replayButton.appendChild(replayText);
 
 // create grids
 const appContainer = document.createElement("div");
@@ -103,7 +114,7 @@ appContainer.appendChild(startButton);
 const player = new Player({
   url: "./audio/bachAudio.mp3",
   fadeIn: 0,
-  fadeOut: 0.05,
+  fadeOut: 0.1,
 }).toMaster();
 player.sync().start();
 
@@ -147,7 +158,6 @@ async function draw() {
         const element = document.createElement("div");
         const row = Math.floor(scale(note.midi, 55, 72, 1, 18));
         element.style.gridArea = `1 / ${row}/ 19 / ${row}`;
-        element.style.zIndex = 5;
 
         const hue = scale(note.midi, 55, 72, 240, 300);
         const saturation = 100;
@@ -189,12 +199,33 @@ async function draw() {
 }
 
 //-----------------------------------------------------------------------
+function replay() {
+  Transport.stop();
+  Transport.position = 0;
+  appContainer.removeChild(replayButton);
+  appContainer.appendChild(containerGrid);
+  containerGrid.appendChild(gridTwo);
+  containerGrid.appendChild(gridOne);
+  // Player.seek(0);
+  Transport.start();
+}
+
+//-----------------------------------------------------------------------
 // start transport
 function start() {
   appContainer.removeChild(startButton);
   appContainer.appendChild(containerGrid);
   containerGrid.appendChild(gridTwo);
   containerGrid.appendChild(gridOne);
+
+  setTimeout(() => {
+    console.log("done");
+    appContainer.removeChild(containerGrid);
+    appContainer.appendChild(replayButton);
+  }, player.buffer.duration * 1000);
+
+  //
+
   // Transport.loop = true;
   // Transport.bpm.value = 114;
   // Transport.loopStart = 0;
