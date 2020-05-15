@@ -236,7 +236,7 @@ function start() {
   // Transport.loopStart = 0;
   // Transport.loopEnd = player.buffer.duration;
   const pressed = unmuteButton.getAttribute("aria-pressed");
-  if (mobile()) {
+  if (mobile({ tablet: true })) {
     unmuteButton.click();
   }
   Transport.start();
