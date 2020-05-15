@@ -1,9 +1,15 @@
+import { Tone } from "tone";
 import { Midi } from "@tonejs/midi";
 import { Player } from "tone";
 import { Buffer } from "tone";
 import { Draw } from "tone";
 import { Transport } from "tone";
+import UnmuteButton from "unmute";
 import mobile from "is-mobile";
+
+//UnmuteButton();
+
+console.log(this);
 
 const height = mobile() ? window.innerHeight + "px" : "100vh";
 
