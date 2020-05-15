@@ -217,7 +217,7 @@ function replay() {
 function start() {
   const unmuteButton = document.querySelector("#unmute-button");
   const pressed = unmuteButton.getAttribute("aria-pressed");
-  if (pressed) {
+  if (pressed && mobile()) {
     unmuteButton.click();
   }
 
