@@ -4,12 +4,8 @@ import { Player } from "tone";
 import { Buffer } from "tone";
 import { Draw } from "tone";
 import { Transport } from "tone";
-import UnmuteButton from "unmute";
+// import UnmuteButton from "unmute";
 import mobile from "is-mobile";
-
-//UnmuteButton();
-
-console.log(this);
 
 const height = mobile() ? window.innerHeight + "px" : "100vh";
 
@@ -219,6 +215,13 @@ function replay() {
 //-----------------------------------------------------------------------
 // start transport
 function start() {
+  const unmuteButton = document.querySelector("#unmute-button");
+  const pressed = unmuteButton.getAttribute("aria-pressed");
+  if (!pressed) {
+    unmuteButton.click();
+  }
+
+  //unmuteButton.click();
   appContainer.removeChild(startButton);
   appContainer.appendChild(containerGrid);
   containerGrid.appendChild(gridTwo);
