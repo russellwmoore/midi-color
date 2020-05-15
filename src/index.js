@@ -216,10 +216,6 @@ function replay() {
 // start transport
 function start() {
   const unmuteButton = document.querySelector("#unmute-button");
-  const pressed = unmuteButton.getAttribute("aria-pressed");
-  if (pressed && mobile()) {
-    unmuteButton.click();
-  }
 
   //unmuteButton.click();
   appContainer.removeChild(startButton);
@@ -240,4 +236,9 @@ function start() {
   // Transport.loopStart = 0;
   // Transport.loopEnd = player.buffer.duration;
   Transport.start();
+  const pressed = unmuteButton.getAttribute("aria-pressed");
+  if (pressed === true) {
+    unmuteButton.click();
+  }
+  document.body.removeChild(unmuteButton);
 }
