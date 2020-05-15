@@ -235,10 +235,11 @@ function start() {
   // Transport.bpm.value = 114;
   // Transport.loopStart = 0;
   // Transport.loopEnd = player.buffer.duration;
-  Transport.start();
   const pressed = unmuteButton.getAttribute("aria-pressed");
   if (pressed === true) {
     unmuteButton.click();
   }
+  Transport.start();
+
   document.body.removeChild(unmuteButton);
 }
