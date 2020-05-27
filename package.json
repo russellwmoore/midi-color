@@ -26,6 +26,7 @@
     "@babel/runtime": "^7.9.6",
     "@tonejs/midi": "^2.0.23",
     "is-mobile": "^2.2.1",
+    "midi-file": "^1.1.2",
     "tone": "^13.8.25",
     "unmute": "^0.1.3"
   }
