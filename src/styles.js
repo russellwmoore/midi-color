@@ -31,16 +31,27 @@ export const appContainerStyle = `
   justify-items: center;
   box-sizing: border-box;
 `;
-
+// innerGridStyles ignore rows for now. Maybe we can use them in a creative way later?
 export const innerGridStyle = ` 
   position: relative;
   display: grid;
   height: 100%;
   width: 100%;
   grid-template-columns: repeat(18, 1fr);
-  grid-template-rows: repeat(18, 1fr);
+  /*grid-template-rows: repeat(18, 1fr);*/
   box-sizing: border-box;
 `;
+
+export const makeInnerGridStyle = (rangeOfNotes) => {
+  return `
+   position: relative;
+  display: grid;
+  height: 100%;
+  width: 100%;
+  grid-template-columns: repeat(${rangeOfNotes}, 1fr);
+  /*grid-template-rows: repeat(${rangeOfNotes}, 1fr);*/
+  box-sizing: border-box;`;
+};
 
 export const containerGridStyle = `
   display: grid;

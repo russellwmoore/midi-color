@@ -5,11 +5,9 @@ import { Buffer } from 'tone';
 import { Draw } from 'tone';
 import { Transport } from 'tone';
 // import UnmuteButton from "unmute";
-import { scale, shiftToBlue } from './utils';
+import { scale, shiftToBlue, getHiAndLoNoteValues } from './utils';
 import * as styles from './styles';
 import mobile from 'is-mobile';
-
-import midiFile from 'midi-file';
 
 // ideally note spread covers range of current 'piece'
 
@@ -48,10 +46,17 @@ appContainer.setAttribute('id', 'appContainer');
 const containerGrid = document.createElement('div');
 appContainer.setAttribute('id', 'containerGrid');
 
+const state = {
+  audioFile: null,
+  midiFile: [],
+  containerDivs: [],
+  hiLo: {},
+};
+
 const makeGridDiv = (id) => {
   const div = document.createElement('div');
   div.setAttribute('id', `grid-${id}`);
-  div.style = styles.innerGridStyle;
+  div.style = styles.makeInnerGridStyle(state.hiLo.hi - state.hiLo.lo);
   return div;
 };
 
@@ -64,11 +69,6 @@ document.body.appendChild(appContainer);
 appContainer.appendChild(startButton);
 
 //
-const state = {
-  audioFile: null,
-  midiFile: [],
-  containerDivs: [],
-};
 
 // File input
 // audio
@@ -87,12 +87,16 @@ async function handleMidiUpload() {
     let blobs = await Promise.all(fileList.map((file) => file.arrayBuffer()));
     let midiFiles = blobs.map((blob) => new Midi(blob));
     state.midiFile = midiFiles;
+    state.hiLo = getHiAndLoNoteValues(state.midiFile);
     // make as many rows as there are midi tracks. TODO: make this work with several midi files with several midi tracks in them
     containerGrid.style = styles.makeContainerGridStyle(state.midiFile.length);
+    console.log('state after adding midi', state);
   } catch (error) {
     console.log('error in midi upload', error);
   }
 }
+
+// Get and process one mp3 file from the upload and update state object.
 
 async function handleAudioUpload() {
   try {
@@ -108,8 +112,7 @@ async function handleAudioUpload() {
 //-----------------------------------------------------------------------
 // schedule drawing based on midi note times
 async function draw(midiFiles) {
-  // TODO: amount of grids is determined by number of midi tracks.
-  console.log(midiFiles);
+  // TODO: amount of grids is determined by number of midi tracks. need to update for midifile with multiple tracks
   let allKeys = midiFiles;
   // make as many containers as we have tracks, give them ids based on the order in the container divs
   state.containerDivs = allKeys.map((singleKey, idx) => {
@@ -120,19 +123,39 @@ async function draw(midiFiles) {
     // TODO: update this function to handle a midi file with multiple tracks
     midiTrack.tracks.forEach((track) => {
       track.notes.forEach((note) => {
-        // console.log(note);
         let time = note.time;
         let duration = note.duration;
         // schedule append element based on note.time
         Transport.schedule(function (time) {
           Draw.schedule(function () {
             const element = document.createElement('div');
-            const col = Math.floor(scale(note.midi, 55, 72, 1, 18));
+            // const col = Math.floor(scale(note.midi, 55, 72, 1, 18));
+            const col = Math.floor(
+              scale(
+                note.midi,
+                state.hiLo.lo,
+                state.hiLo.hi,
+                1,
+                state.hiLo.hi - state.hiLo.lo
+              )
+            );
             element.style.gridArea = `1 / ${col}/ 19 / ${col}`;
 
-            const hue = scale(note.midi, 55, 72, 240, 300);
+            const hue = scale(
+              note.midi,
+              state.hiLo.lo,
+              state.hiLo.hi,
+              240,
+              300
+            );
             const saturation = 100;
-            const lightness = scale(note.midi, 55, 72, 40, 50);
+            const lightness = scale(
+              note.midi,
+              state.hiLo.lo,
+              state.hiLo.hi,
+              40,
+              50
+            );
             element.style.background = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
             state.containerDivs[idx].appendChild(element);
 
@@ -203,13 +226,6 @@ function replay() {
   Transport.position = 0;
   appContainer.removeChild(replayButton);
   appContainer.appendChild(containerGrid);
-  // containerGrid.appendChild(gridTwo);
-  // containerGrid.appendChild(gridOne);
-  state.containerDivs.forEach((cd) => {
-    cd.style = styles.innerGridStyle;
-    containerGrid.appendChild(cd);
-  });
-  // Player.seek(0);
   Transport.start();
 }
 
@@ -219,7 +235,6 @@ function start() {
   console.log('start', state);
   const unmuteButton = document.querySelector('#unmute-button');
   const player = new Player({
-    // url: './audio/bachAudio.mp3',
     url: state.audioFile,
     fadeIn: 0,
     fadeOut: 0.1,
@@ -228,15 +243,8 @@ function start() {
   //
 
   console.log('loaded', state);
-  draw(
-    // './midi/bachChords.mid',
-    // './midi/bachKeys2.mid',
-    // './midi/bachKeys1.mid',
-    // './midi/bachChords.mid',
-    // './midi/bachKeys2.mid',
-    // './midi/bachKeys1.mid',
-    state.midiFile
-  ).then(() => {
+
+  draw(state.midiFile).then(() => {
     // TODO: draw needs to take in midi URLs. Where should theys get them? Also need to make enough grids for each midi track.
     //unmuteButton.click();
     appContainer.removeChild(startButton);
@@ -245,6 +253,7 @@ function start() {
     state.containerDivs.forEach((cd) => {
       containerGrid.appendChild(cd);
     });
+
     const id = setTimeout(() => {
       console.log('done');
       appContainer.removeChild(containerGrid);
