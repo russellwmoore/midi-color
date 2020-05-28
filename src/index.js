@@ -141,7 +141,7 @@ async function draw(midiFiles) {
                 state.info.lo,
                 state.info.hi,
                 1,
-                state.info.hi - state.info.lo + 1
+                state.info.hi - state.info.lo
               )
             );
             element.style.gridArea = `1 / ${col}/ 19 / ${col}`;
