@@ -13,19 +13,21 @@ export function scale(value, inMin, inMax, outMin, outMax) {
 }
 
 //-----------------------------------------------------------------------
-export function getHiAndLoNoteValues(midiArr) {
-  const hiLo = {
+export function getMidiFilesInfo(midiArr) {
+  const info = {
     lo: Infinity,
     hi: -Infinity,
+    count: 0,
   };
 
   midiArr.forEach((midi) => {
     midi.tracks.forEach((track) => {
+      info.count++;
       track.notes.forEach((note) => {
-        hiLo.lo = Math.min(note.midi, hiLo.lo);
-        hiLo.hi = Math.max(note.midi, hiLo.hi);
+        info.lo = Math.min(note.midi, info.lo);
+        info.hi = Math.max(note.midi, info.hi);
       });
     });
   });
-  return hiLo;
+  return info;
 }
