@@ -125,7 +125,6 @@ async function draw(midiFiles) {
     .flat();
 
   midiFiles.forEach((midiTrack, midiTrackIdx) => {
-    // TODO: update this function to handle a midi file with multiple tracks
     midiTrack.tracks.forEach((track, trackIdx) => {
       track.notes.forEach((note) => {
         let time = note.time;
@@ -173,56 +172,6 @@ async function draw(midiFiles) {
       });
     });
   });
-  // console.log(keysOne);
-
-  // loop through keysOneNotes
-  // keysOneNotes.forEach((note) => {
-  //   let time = note.time;
-  //   let duration = note.duration;
-  //   // schedule append element based on note.time
-  //   Transport.schedule(function (time) {
-  //     Draw.schedule(function () {
-  //       const element = document.createElement('div');
-  //       const row = Math.floor(scale(note.midi, 55, 72, 1, 18));
-  //       element.style.gridArea = `${Math.floor(Math.random()* 19)} / ${row}/ ${Math.floor(Math.random()* 19)} / ${row}`;
-
-  //       const hue = scale(note.midi, 55, 72, 240, 300);
-  //       const saturation = 100;
-  //       const lightness = scale(note.midi, 55, 72, 40, 50);
-  //       element.style.background = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-  //       gridOne.appendChild(element);
-
-  //       // schedule remove element after note duration
-  //       Draw.schedule(function () {
-  //         gridOne.removeChild(element);
-  //       }, time + duration + 0.05);
-  //     }, time);
-  //   }, time);
-  // });
-
-  // keysTwoNotes.forEach((note) => {
-  //   let time = note.time;
-  //   let duration = note.duration;
-  //   // schedule append element based on note.time
-  //   Transport.schedule(function (time) {
-  //     Draw.schedule(function () {
-  //       const element = document.createElement('div');
-  //       const row = Math.floor(scale(note.midi, 55, 72, 1, 18));
-  //       element.style.gridArea = `1 / ${row}/ 19 / ${row}`;
-
-  //       const hue = scale(note.midi, 55, 72, 0, 70);
-  //       const saturation = 100;
-  //       const lightness = scale(note.midi, 55, 72, 40, 50);
-  //       element.style.background = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-  //       gridTwo.appendChild(element);
-
-  //       // schedule remove element after note duration
-  //       Draw.schedule(function () {
-  //         gridTwo.removeChild(element);
-  //       }, time + duration + 0.05);
-  //     }, time);
-  //   }, time);
-  // });
 }
 
 //-----------------------------------------------------------------------
@@ -258,8 +207,6 @@ function start() {
   console.log('loaded', state);
 
   draw(state.midiFile).then(() => {
-    // TODO: draw needs to take in midi URLs. Where should theys get them? Also need to make enough grids for each midi track.
-    //unmuteButton.click();
     appContainer.removeChild(startButton);
     appContainer.appendChild(containerGrid);
     // create with the correct varaibles the container and the grids
@@ -273,8 +220,6 @@ function start() {
       appContainer.appendChild(replayButton);
       clearTimeout(id);
     }, player.buffer.duration * 1000);
-
-    //
 
     // Transport.loop = true;
     // Transport.bpm.value = 114;

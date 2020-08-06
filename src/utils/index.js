@@ -19,6 +19,11 @@ export function getMidiFilesInfo(midiArr) {
     hi: -Infinity,
     count: 0,
   };
+  // midiArr.forEach((midiFile) => {
+  //   midiFile.tracks = midiFile.tracks.filter((single) => {
+  //     return single.notes.length;
+  //   });
+  // });
 
   midiArr.forEach((midi) => {
     midi.tracks.forEach((track) => {
