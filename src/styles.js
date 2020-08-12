@@ -14,6 +14,15 @@ export const buttonStyle = `
   cursor: pointer;
 `;
 
+export const inputStyle = `
+width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+`;
+
 export const messageStyle = `
   font-family: monospace;
   font-size: 2em;

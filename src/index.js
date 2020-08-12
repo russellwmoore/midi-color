@@ -12,6 +12,30 @@ import mobile from 'is-mobile';
 // ideally note spread covers range of current 'piece'
 
 // create start button
+
+const audioInput = document.createElement('input');
+audioInput.setAttribute('type', 'file');
+audioInput.setAttribute('name', 'audio-input');
+audioInput.setAttribute('id', 'audio-input');
+audioInput.setAttribute('accept', '.mp3');
+
+const audioLabel = document.createElement('label');
+audioLabel.setAttribute('for', 'audio-input');
+audioLabel.setAttribute('id', 'audio-input-label');
+audioLabel.style = styles.buttonStyle;
+
+const midiInput = document.createElement('input');
+midiInput.setAttribute('type', 'file');
+midiInput.setAttribute('name', 'midi-input');
+midiInput.setAttribute('id', 'midi-input');
+midiInput.setAttribute('accept', '.mid');
+midiInput.setAttribute('multiple', 'true');
+
+const midiLabel = document.createElement('label');
+midiLabel.setAttribute('for', 'midi-input');
+midiLabel.setAttribute('id', 'midi-input-label');
+midiLabel.style = styles.buttonStyle;
+
 const startButton = document.createElement('div');
 startButton.style = styles.buttonStyle;
 startButton.addEventListener('click', start);
@@ -30,6 +54,14 @@ const replayText = document.createElement('span');
 replayText.style = styles.messageStyle;
 replayText.innerText = 'play again';
 
+const audioInputText = document.createElement('span');
+audioInputText.style = styles.messageStyle;
+audioInputText.innerText = 'upload mp3';
+
+const midiInputText = document.createElement('span');
+midiInputText.style = styles.messageStyle;
+midiInputText.innerText = 'upload midi file(s)';
+
 const soundMessage = document.createElement('span');
 soundMessage.style = styles.messageStyleSmall;
 soundMessage.innerText = '(turn on sound)';
@@ -38,6 +70,8 @@ soundMessage.innerText = '(turn on sound)';
 startButton.appendChild(startText);
 startButton.appendChild(soundMessage);
 replayButton.appendChild(replayText);
+audioLabel.appendChild(audioInputText);
+midiLabel.appendChild(midiInputText);
 
 // create grids
 const appContainer = document.createElement('div');
@@ -66,19 +100,20 @@ containerGrid.style = styles.containerGridStyle;
 
 // append elements
 document.body.appendChild(appContainer);
-appContainer.appendChild(startButton);
+appContainer.appendChild(audioInput);
+appContainer.appendChild(audioLabel);
 
 //
 
 // File input
 // audio
-const audioInputEl = document.getElementById('audio-input');
-audioInputEl.addEventListener('change', handleAudioUpload, false);
+// const audioInputEl = document.getElementById('audio-input');
+audioInput.addEventListener('change', handleAudioUpload, false);
 const audioCtx = new (AudioContext || webkitAudioContext)();
 
 // midi
-const midiInputEl = document.getElementById('midi-input');
-midiInputEl.addEventListener('change', handleMidiUpload, false);
+// const midiInputEl = document.getElementById('midi-input');
+midiInput.addEventListener('change', handleMidiUpload, false);
 
 // Get and process all midifiles from the upload and update state object.
 async function handleMidiUpload() {
@@ -90,6 +125,9 @@ async function handleMidiUpload() {
     state.info = getMidiFilesInfo(state.midiFile);
     // make as many rows as there are midi tracks. TODO: make this work with several midi files with several midi tracks in them
     containerGrid.style = styles.makeContainerGridStyle(state.info.count);
+    midiInput.parentNode.removeChild(midiInput);
+    midiLabel.parentNode.removeChild(midiLabel);
+    appContainer.appendChild(startButton);
     console.log('state after adding midi', state);
   } catch (error) {
     console.log('error in midi upload', error);
@@ -105,6 +143,12 @@ async function handleAudioUpload() {
     const audioBuffer = await audioCtx.decodeAudioData(buffer);
     state.audioFile = audioBuffer;
     console.log('audio loaded');
+    // run function to take down mp3 audio button and append midi button
+
+    audioLabel.parentNode.removeChild(audioLabel);
+    audioInput.parentNode.removeChild(audioInput);
+    appContainer.appendChild(midiInput);
+    appContainer.appendChild(midiLabel);
   } catch (error) {
     console.log('error in audio upload', error);
   }
@@ -113,8 +157,6 @@ async function handleAudioUpload() {
 //-----------------------------------------------------------------------
 // schedule drawing based on midi note times
 async function draw(midiFiles) {
-  // TODO: amount of grids is determined by number of midi tracks. need to update for midifile with multiple tracks
-
   // make as many containers as we have tracks, give them ids based on the order in the container divs
   state.containerDivs = midiFiles
     .map((midiFile, idx) => {
@@ -181,8 +223,19 @@ function replay() {
   appContainer.removeChild(replayButton);
   appContainer.appendChild(containerGrid);
   Transport.start();
+  replayDisplay();
 }
 
+//-----------------------------------------------------------------------
+// helpers
+function replayDisplay() {
+  const id = setTimeout(() => {
+    console.log('done');
+    appContainer.removeChild(containerGrid);
+    appContainer.appendChild(replayButton);
+    clearTimeout(id);
+  }, state.player.buffer.duration * 1000);
+}
 //-----------------------------------------------------------------------
 // start transport
 function start() {
@@ -196,12 +249,12 @@ function start() {
   }
   console.log('start', state);
   const unmuteButton = document.querySelector('#unmute-button');
-  const player = new Player({
+  state.player = new Player({
     url: state.audioFile,
     fadeIn: 0,
     fadeOut: 0.1,
   }).toMaster();
-  player.sync().start();
+  state.player.sync().start();
   //
 
   console.log('loaded', state);
@@ -214,15 +267,10 @@ function start() {
       containerGrid.appendChild(cd);
     });
 
-    const id = setTimeout(() => {
-      console.log('done');
-      appContainer.removeChild(containerGrid);
-      appContainer.appendChild(replayButton);
-      clearTimeout(id);
-    }, player.buffer.duration * 1000);
+    replayDisplay();
 
     // Transport.loop = true;
-    // Transport.bpm.value = 114;
+    // Transport.bpm.value = 10;
     // Transport.loopStart = 0;
     // Transport.loopEnd = player.buffer.duration;
     const pressed = unmuteButton.getAttribute('aria-pressed');
